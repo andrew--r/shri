@@ -1,0 +1,15 @@
+.content p {
+	padding-bottom: 1.75rem;
+	text-align: justify;
+	hyphens: auto;
+	
+	&:last-of-type {
+		padding-bottom: 0;
+	}
+	
+	&.lead:first-letter {
+		font-weight: 700;
+		font-size: 3.8rem;
+		line-height: 0;
+	}
+}

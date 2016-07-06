@@ -1,0 +1,8 @@
+.aside-image-signature {
+	font-size: 0.8rem;
+	
+	@media (--tablet) {
+		max-width: 20.125rem;
+		margin: auto;
+	}
+}

@@ -1,0 +1,124 @@
+.hero-section {
+	position: relative;
+	overflow: hidden;
+	display: flex;
+	width: 100%;
+	text-align: center;
+	color: #fff;
+	background-size: cover;
+	background-position: center;
+
+	&::before {
+		content: '';
+		position: absolute;
+		z-index: 1;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, .2);
+	}
+
+	&__bg {
+		position: fixed;
+		z-index: -1;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-size: cover;
+		background-position: center;
+		will-change: transform;
+	}
+
+	&__inner {
+		position: relative;
+		z-index: 2;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		min-height: 80vh;
+		padding: 0 1rem;
+	}
+
+	&__main,
+	&__caption {
+		width: 100%;
+	}
+
+	&__main {
+		flex-grow: 1;
+		flex-shrink: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+
+	&__heading,
+	&__description {
+		width: 100%;
+		padding: .78125rem 0;
+		
+		@media (--mobile) {
+			padding: .28125rem 0;
+		}
+	}
+
+	&__heading {
+		font-size: 3.1rem;
+		line-height: 1.6;
+		letter-spacing: .32em;
+		
+		@media (--mobile) {
+			font-size: 1.2rem;
+			line-height: 2.1;
+		}
+
+		&--lead {
+			font-size: 4.5rem;
+			letter-spacing: .48em;
+
+			@media (--mobile) {
+				font-size: 2.5rem;
+				letter-spacing: .4em;
+			}
+		}
+	}
+
+	&__description {
+		font-weight: 700;
+		letter-spacing: .7em;
+		
+		@media (--mobile) {
+			font-size: 0.8rem;
+			letter-spacing: .5em;
+		}
+	}
+
+	&__caption {
+		padding: 1rem 0 1.875rem;
+		font-size: .8rem;
+		line-height: 1.6;
+		white-space: normal;
+		
+		@media (--tablet) {
+			padding: 1.25rem 0 2.5rem;
+		}
+
+		@media (--mobile) {
+			padding: 1.1rem 0 2.2rem;
+		}
+	}
+
+	& a {
+		color: inherit;
+		text-decoration: none;
+		
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+}

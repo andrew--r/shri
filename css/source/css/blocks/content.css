@@ -1,0 +1,40 @@
+.content {
+	max-width: 62.5rem;
+	margin: auto;
+	padding: 8vh 2.5rem 10vh;
+	font-size: 1.2rem;
+
+	@media (--mobile) {
+		max-width: 34.375rem;
+		padding-left: 5%;
+		padding-right: 5%;
+	}
+
+	&__inner {
+		position: relative;
+		padding-right: 45%;
+		
+		@media (--mobile) {
+			padding-right: 0;
+		}
+	}
+
+	&__aside {
+		position: absolute;
+		right: 0;
+		width: 35%;
+
+		@media (--mobile) {
+			position: static;
+			width: 100%;
+		}
+
+		&--top {
+			top: 0;
+		}
+
+		&--bottom {
+			bottom: 0;
+		}
+	}
+}

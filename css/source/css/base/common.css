@@ -1,0 +1,43 @@
+@custom-media --tablet screen and (max-width: 79.9375rem);
+@custom-media --mobile screen and (max-width: 47.9375rem);
+
+
+html,
+body {
+	height: 100%;
+}
+
+html {
+	font-size: 100%;
+	box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+	box-sizing: inherit;
+}
+
+body {
+	line-height: 1.4;
+	font-family: 'PT Serif', Georgia, serif;
+	background: #fff;
+}
+
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+b,
+strong {
+	font-weight: 700;
+}
+
+img {
+	display: block;
+	max-width: 100%;
+	width: 100%;
+}

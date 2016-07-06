@@ -1,0 +1,41 @@
+.blockquote {
+	font-size: .8rem;
+	
+	&--big {
+		font-size: 1rem;
+		font-weight: 700;
+	}
+
+	@media (--mobile) {
+		max-width: 350px;
+		margin: auto;
+		padding-left: 5%;
+		padding-right: 5%;
+	}
+}
+
+p + .content__aside > .blockquote {
+	padding-top: calc(5vh - 1.75rem);
+}
+
+p:last-of-type + .content__aside > .blockquote {
+	padding-top: 5vh;
+}
+
+.content__aside:not(:last-child) .blockquote {
+	padding-bottom: 5vh;
+}
+
+.blockquote__inner {
+	position: relative;
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: -1.25rem;
+		width: 4px;
+		background: #f0f0e8;
+	}
+}

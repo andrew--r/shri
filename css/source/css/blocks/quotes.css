@@ -1,16 +1,16 @@
 .blockquote {
 	font-size: .8rem;
 	
-	&--big {
-		font-size: 1rem;
-		font-weight: 700;
-	}
-
 	@media (--mobile) {
 		max-width: 350px;
 		margin: auto;
 		padding-left: 5%;
 		padding-right: 5%;
+	}
+	
+	&--big {
+		font-size: 1rem;
+		font-weight: 700;
 	}
 }
 
@@ -28,6 +28,7 @@ p:last-of-type + .content__aside > .blockquote {
 
 .blockquote__inner {
 	position: relative;
+	display: block;
 
 	&::before {
 		content: '';

@@ -168,6 +168,6 @@ export default class Door1 extends DoorBase {
 
 		setInterval(() => {
 			lock.changeColor(colorsTable[lock.color]);
-		}, 500);
+		}, 150);
 	}
 }

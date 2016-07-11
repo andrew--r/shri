@@ -1,7 +1,8 @@
-import {Vector2d} from '../helpers';
+import {Vector2d, isBoxInsideAnother} from '../helpers';
 import DoorBase from '../doorBase';
 import Button from '../items/button';
 import Key from '../items/key';
+import Lock from '../items/lock';
 
 /**
  * @class Door1
@@ -15,28 +16,34 @@ export default class Door1 extends DoorBase {
 		const popupContent = this.popup.querySelector('.popup__content');
 
 		this.popupContent = popupContent;
-		this.classes = {
-			lever: {
-				base: 'door-lever',
-				initialized: 'door-lever_initialized',
-			},
-			button: {
-				base: 'door-button',
-				visible: 'door-button_visible',
-				pressed: 'door-button_pressed',
-				initialized: 'door-button_initialized',
-			},
-			key: {
-				base: 'door-key',
-				initialized: 'door-key_initialized',
-			},
-		};
+
+		this.keysInLock = [];
+		this.finishedKeys = [];
 
 		const buttonSize = new Vector2d(64, 64);
 		const keySize = new Vector2d(64, 64);
+		const lockSize = new Vector2d(128, 128);
 
 		const gameFieldWidth = popupContent.clientWidth;
 		const gameFieldHeight = popupContent.clientHeight;
+
+		this._tryToInserKey = (function tryToInsertKey() {
+			const {lock} = this.items;
+			this.keysInLock = this.keysInLock.reduce((keys, key) => {
+				if (key.color === lock.color) {
+					this.finishedKeys.push(key);
+					key.destroy();
+				} else {
+					keys.push(key);
+				}
+
+				return keys;
+			}, []);
+
+			if (this.finishedKeys.length === this.items.keys.length) {
+				this.unlock();
+			}
+		}).bind(this);
 
 		this.items = {
 			button: new Button({
@@ -45,6 +52,7 @@ export default class Door1 extends DoorBase {
 					gameFieldWidth * 0.5 - buttonSize.x / 2,
 					gameFieldHeight - buttonSize.y
 				),
+				onPush: this._tryToInserKey,
 			}),
 
 			keys: ['red', 'green', 'blue'].map((color, index) => new Key({
@@ -55,16 +63,26 @@ export default class Door1 extends DoorBase {
 					gameFieldHeight * 0.1
 				),
 			})),
+
+			lock: new Lock({
+				color: 'red',
+				size: lockSize,
+				defaultPosition: new Vector2d(
+					gameFieldWidth / 2 - lockSize.x / 2,
+					gameFieldHeight / 2 - lockSize.y / 2
+				),
+				zIndex: 0,
+			}),
 		};
 
 		this.initializeButton();
 		this.initializeKeys();
+		this.initializeLock();
 	}
 
 	initializeButton() {
-		const {popupContent} = this;
 		const {button} = this.items;
-		popupContent.appendChild(button.node);
+		this.popupContent.appendChild(button.node);
 		button.initialize();
 	}
 
@@ -78,9 +96,9 @@ export default class Door1 extends DoorBase {
 			key.initialize();
 		});
 
-		this.popupContent.addEventListener('pointerdown', keyDragStart);
-		this.popupContent.addEventListener('pointermove', keyDrag);
-		this.popupContent.addEventListener('pointerup', keyDragEnd);
+		this.popupContent.addEventListener('pointerdown', keyDragStart.bind(this));
+		this.popupContent.addEventListener('pointermove', keyDrag.bind(this));
+		this.popupContent.addEventListener('pointerup', keyDragEnd.bind(this));
 
 		function keyDragStart(event) {
 			if (event.target.getAttribute('data-item-name') !== 'key') return;
@@ -112,7 +130,44 @@ export default class Door1 extends DoorBase {
 		}
 
 		function keyDragEnd(event) {
+			if (!isDragging) return;
+			const {lock} = this.items;
 			isDragging = false;
+			const {key} = dragState[event.pointerId.toString()];
+			dragState[event.pointerId.toString()] = undefined;
+
+			// проверяем, находится ли ключ в замке
+			const isInsideLock = isBoxInsideAnother(
+				lock.coordinates,
+				lock.size,
+				key.coordinates,
+				key.size
+			);
+
+			const findKeyWithId = (id) => (item) => item.id === id;
+			const excludeKeyWithId = (id) => (item) => item.id !== id;
+
+			if (isInsideLock) {
+				if (!this.keysInLock.some(findKeyWithId(key.id))) this.keysInLock.push(key);
+			} else {
+				this.keysInLock = this.keysInLock.filter(excludeKeyWithId(key.id));
+			}
 		}
+	}
+
+	initializeLock() {
+		const {lock} = this.items;
+		const colorsTable = {
+			red: 'green',
+			green: 'blue',
+			blue: 'red',
+		};
+
+		this.popupContent.appendChild(lock.node);
+		lock.initialize();
+
+		setInterval(() => {
+			lock.changeColor(colorsTable[lock.color]);
+		}, 500);
 	}
 }

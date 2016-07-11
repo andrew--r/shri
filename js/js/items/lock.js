@@ -12,9 +12,9 @@ import {Vector2d} from '../helpers';
 export default class Key extends GameItem {
 	constructor(options) {
 		super(Object.assign({}, options, {
-			name: 'key',
-			baseClass: 'door-key',
-			size: options.size || new Vector2d(32, 32),
+			name: 'lock',
+			baseClass: 'door-lock',
+			size: options.size || new Vector2d(128, 128),
 			defaultPosition: options.defaultPosition || new Vector2d(0, 0),
 		}));
 
@@ -36,5 +36,13 @@ export default class Key extends GameItem {
 
 	destroy() {
 		super.destroy();
+	}
+
+	changeColor(newColor) {
+		this.render(() => {
+			this.node.classList.remove(this.classes[this.color]);
+			this.node.classList.add(this.classes[newColor]);
+			this.color = newColor;
+		});
 	}
 }

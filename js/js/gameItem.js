@@ -7,6 +7,7 @@ import {Vector2d} from './helpers';
  * @param {Vector2d} options.defaultPosition - initial item position on screen
  * @param {String} options.baseClass - base DOM element class
  * @param {String} options.name - item type name
+ * @param {Number} zIndex
  */
 
 export default class GameItem {
@@ -27,10 +28,17 @@ export default class GameItem {
 		this.defaultPosition = options.defaultPosition || new Vector2d(0, 0);
 		this.translate = new Vector2d(0, 0);
 
+		if (options.zIndex === undefined) {
+			this.zIndex = 1;
+		} else {
+			this.zIndex = options.zIndex;
+		}
+
 		const {node, classes} = this;
 
 		this.render(() => {
 			node.style.position = 'absolute';
+			node.style.zIndex = this.zIndex;
 			node.setAttribute('data-id', this.id);
 			node.setAttribute('data-item-name', options.name);
 
@@ -59,6 +67,10 @@ export default class GameItem {
 			node.classList.remove(classes.initialized);
 			this.isInitialized = false;
 		});
+	}
+
+	get coordinates() {
+		return Vector2d.sum(this.defaultPosition, this.translate);
 	}
 
 	/**

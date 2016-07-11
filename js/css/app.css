@@ -252,14 +252,26 @@ body {
 
 /* lock */
 .door-lock {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	display: none;
 	width: 128px;
 	height: 128px;
 	background-size: cover;
+}
+
+.door-lock_initialized {
+	display: block;
+}
+
+.door-lock_red {
+	background-image: url('../img/lockRed.png');
+}
+
+.door-lock_green {
 	background-image: url('../img/lockGreen.png');
+}
+
+.door-lock_blue {
+	background-image: url('../img/lockBlue.png');
 }
 
 /* key */

@@ -7,15 +7,16 @@ import {Vector2d} from '../helpers';
  *
  * @param {Vector2d} options.size
  * @param {Vector2d} options.position
+ * @param {Function} onPush
  */
 export default class Button extends GameItem {
 	constructor(options) {
-		super({
+		super(Object.assign({}, options, {
 			name: 'button',
 			baseClass: 'door-button',
 			size: options.size || new Vector2d(32, 32),
 			defaultPosition: options.defaultPosition || new Vector2d(0, 0),
-		});
+		}));
 
 		this.classes.initialized = `${this.classes.base}_initialized`;
 		this.classes.hidden = `${this.classes.base}_hidden`;
@@ -23,6 +24,9 @@ export default class Button extends GameItem {
 
 		this._onPress = (function onPress() {
 			this.press();
+			if (options.onPush) {
+				options.onPush();
+			}
 		}).bind(this);
 
 		this._onRelease = (function onRelease() {

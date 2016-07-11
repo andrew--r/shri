@@ -1,186 +1,287 @@
 html, body {
-    min-height: 100%;
+	min-height: 100%;
+}
+
+html {
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+}
+
+*,
+*:before,
+*:after {
+	user-select: inherit;
+	-moz-user-select: inherit;
+	-webkit-user-select: inherit;
+	-ms-user-select: inherit;
 }
 
 body {
-    background-color: #ACC0C1;
+	background-color: #ACC0C1;
 }
 
 .container {
-    position: relative;
-    max-width: 400px;
-    margin: 0 auto;
+	position: relative;
+	max-width: 400px;
+	margin: 0 auto;
 }
 
 @media (min-width: 450px) {
-    .container {
-        box-shadow: 1px 1px 20px #666;
-    }
+	.container {
+		box-shadow: 1px 1px 20px #666;
+	}
 }
 
 .level {
-    position: relative;
-    min-width: 320px;
-    background-size: cover;
-    background-position: left top;
-    background-repeat: no-repeat;
+	position: relative;
+	min-width: 320px;
+	background-size: cover;
+	background-position: left top;
+	background-repeat: no-repeat;
 }
 
 .level_0 {
-    background-image: url(../img/level_0_bg.jpg);
-    height: 180px;
-    position: relative;
+	background-image: url(../img/level_0_bg.jpg);
+	height: 180px;
+	position: relative;
 }
 
 .level_0:after {
-    content: ' ';
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url(../img/logo.png) no-repeat center 25px;
-    background-size: contain;
-    pointer-events: none;
+	content: ' ';
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: url(../img/logo.png) no-repeat center 25px;
+	background-size: contain;
+	pointer-events: none;
 }
 
 .level_1 {
-    background-image: url(../img/level_1_bg.png);
-    height: 235px;
+	background-image: url(../img/level_1_bg.png);
+	height: 235px;
 }
 
 .level_2 {
-    background-image: url(../img/level_2_bg.png);
-    height: 235px;
+	background-image: url(../img/level_2_bg.png);
+	height: 235px;
 }
 
 .level_3 {
-    background-image: url(../img/level_3_bg.png);
-    height: 235px;
+	background-image: url(../img/level_3_bg.png);
+	height: 235px;
 }
 
 .level_4 {
-    background-image: url(../img/level_4_bg.png);
-    height: 75px;
+	background-image: url(../img/level_4_bg.png);
+	height: 75px;
 }
 
 .door {
-    position: absolute;
-    bottom: 0;
-    background: url(../img/door.png) no-repeat top left;
-    width: 64px;
-    height: 100px;
+	position: absolute;
+	bottom: 0;
+	background: url(../img/door.png) no-repeat top left;
+	width: 64px;
+	height: 100px;
 
-    cursor: pointer;
+	cursor: pointer;
 }
 
 .door_locked {
-    background: url(../img/door_locked.png) no-repeat top left;
+	background: url(../img/door_locked.png) no-repeat top left;
 }
 
 .door_disabled {
-    opacity: .7;
+	opacity: .7;
 }
 
 .door_level_0 {
-    right: 2%;
+	right: 2%;
 }
 
 .door_level_1 {
-    left: 2%;
+	left: 2%;
 }
 
 .door_level_2 {
-    right: 2%;
+	right: 2%;
 }
 
 .box {
-    position: absolute;
-    left: 10%;
-    bottom: 0;
+	position: absolute;
+	left: 10%;
+	bottom: 0;
 
-    background: url('../img/box.png') no-repeat top left;
-    width: 32px;
-    height: 32px;
+	background: url('../img/box.png') no-repeat top left;
+	width: 32px;
+	height: 32px;
 
-    cursor: pointer;
+	cursor: pointer;
 }
 
 .popup {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    top: 0;
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	top: 0;
 
-    background-color: rgba(0,0,0,.3);
-    transition: opacity .3s;
+	background-color: rgba(0,0,0,.3);
+	transition: opacity .3s;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .popup_hidden {
-    pointer-events: none;
-    opacity: 0;
+	pointer-events: none;
+	opacity: 0;
 }
 
 .popup__content {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    max-width: 400px;
+	position: relative;
+	width: 100%;
+	height: 100%;
+	max-width: 400px;
 
-    background: #000 url(../img/door_level_0.jpg) no-repeat center;
-    background-size: cover;
+	background: #000 url(../img/door_level_0.jpg) no-repeat center;
+	background-size: cover;
 }
 
 .popup__close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    font-size: 24px;
-    color: #fff;
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	font-size: 24px;
+	color: #fff;
 
-    cursor: pointer;
+	cursor: pointer;
 }
 
 .popup__content_level_0 {
-    /* Можно поставить какую-нибудь свою картинку двери на бек */
+	/* Можно поставить какую-нибудь свою картинку двери на бек */
 }
 
 .popup__content_level_1 {
-    /* Можно поставить какую-нибудь свою картинку двери на бек */
+	/* Можно поставить какую-нибудь свою картинку двери на бек */
 }
 
 .popup__content_level_2 {
-    /* Можно поставить какую-нибудь свою картинку двери на бек */
+	/* Можно поставить какую-нибудь свою картинку двери на бек */
 }
 .popup__content_level_3 {
-    background-image: url(../img/door__box.png);
-    background-size: contain;
+	background-image: url(../img/door__box.png);
+	background-size: contain;
 }
 
 .door-riddle {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+	height: 100%;
 }
 
 .door-riddle__button {
-    width: 64px;
-    height: 64px;
-    border-radius: 64px;
-    background-color: #583319;
-    border: 1px solid #F3E9E0;
-    box-shadow: 3px 3px 3px rgba(0, 0, 0, .4);
+	width: 64px;
+	height: 64px;
+	border-radius: 64px;
+	background-color: #583319;
+	border: 1px solid #F3E9E0;
+	box-shadow: 3px 3px 3px rgba(0, 0, 0, .4);
 
-    transition: background-color .3s;
+	transition: background-color .3s;
 }
 
 .door-riddle__button_pressed {
-    background-color: #F3E5D9;
+	background-color: #F3E5D9;
+}
+
+/* lever */
+.door-lever {
+	display: none;
+	width: 64px;
+	height: 64px;
+	background-size: 64px;
+	background-position: center bottom;
+	background-repeat: no-repeat;
+	transition: background .1s linear;
+}
+
+.door-lever_initialized {
+	display: block;
+}
+
+.door-lever[data-direction="middle"] {
+	background-image: url('../img/leverMid.png');
+}
+
+.door-lever[data-direction="left"] {
+	background-image: url('../img/leverLeft.png');
+}
+
+.door-lever[data-direction="right"] {
+	background-image: url('../img/leverRight.png');
+}
+
+/* button */
+.door-button {
+	display: none;
+	width: 64px;
+	height: 64px;
+	background-size: cover;
+	background-image: url('../img/switchGreen.png');
+	transition: opacity .4s ease;
+}
+
+.door-button_initialized {
+	display: block;
+}
+
+.door-button_pressed {
+	background-image: url('../img/switchGreen_pressed.png');
+}
+
+.door-button_hidden {
+	opacity: 0;
+}
+
+/* lock */
+.door-lock {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 128px;
+	height: 128px;
+	background-size: cover;
+	background-image: url('../img/lockGreen.png');
+}
+
+/* key */
+.door-key {
+	display: none;
+	width: 64px;
+	height: 64px;
+	background-size: cover;
+}
+
+.door-key_initialized {
+	display: block;
+}
+
+.door-key_red {
+	background-image: url('../img/keyRed.png');
+}
+
+.door-key_green {
+	background-image: url('../img/keyGreen.png');
+}
+
+.door-key_blue {
+	background-image: url('../img/keyBlue.png');
 }

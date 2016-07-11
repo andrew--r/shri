@@ -86,9 +86,14 @@ export default class Door1 extends DoorBase {
 			if (event.target.getAttribute('data-item-name') !== 'key') return;
 
 			const isTarget = (key) => key.id === parseInt(event.target.getAttribute('data-id'), 10);
+			const key = self.items.keys.filter(isTarget)[0];
 			dragState[event.pointerId.toString()] = {
-				startPosition: new Vector2d(event.clientX, event.clientY),
-				key: self.items.keys.filter(isTarget)[0],
+				key,
+				startPosition: new Vector2d(
+					event.clientX,
+					event.clientY
+				),
+				startTranslate: key.translate,
 			};
 
 			isDragging = true;
@@ -97,10 +102,10 @@ export default class Door1 extends DoorBase {
 		function keyDrag(event) {
 			if (!isDragging) return;
 
-			const {key, startPosition} = dragState[event.pointerId.toString()];
+			const {key, startPosition, startTranslate} = dragState[event.pointerId.toString()];
 			key.setTranslate(new Vector2d(
-				event.clientX - startPosition.x,
-				event.clientY - startPosition.y
+				startTranslate.x + (event.clientX - startPosition.x),
+				startTranslate.y + (event.clientY - startPosition.y)
 			));
 
 			key.render(() => key.updatePosition());

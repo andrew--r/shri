@@ -1,7 +1,7 @@
 import Door0 from './doors/door0';
 import Door1 from './doors/door1';
 import Door2 from './doors/door2';
-import Box from './box';
+import Box from './doors/box';
 
 /**
  * @class App

@@ -5,20 +5,18 @@ import ColoredGameItem from '../coloredGameItem';
  *
  * @param {Vector2d} options.size
  * @param {Vector2d} options.position
+ * @param {String} color - 'red', 'green' or 'blue'
  */
-export default class Lock extends ColoredGameItem {
+export default class Jewel extends ColoredGameItem {
 	constructor(options) {
 		super(Object.assign({}, options, {
-			name: 'lock',
+			name: 'jewel',
 			colors: {
-				red: {
-					url: 'img/lockRed.png',
+				blueEmpty: {
+					url: 'img/hudJewel_blue_empty.png',
 				},
-				green: {
-					url: 'img/lockGreen.png',
-				},
-				blue: {
-					url: 'img/lockBlue.png',
+				blueFilled: {
+					url: 'img/hudJewel_blue.png',
 				},
 			},
 		}));

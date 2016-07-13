@@ -1,6 +1,4 @@
-import GameItem from '../gameItem';
-import {Vector2d} from '../helpers';
-
+import ColoredGameItem from '../coloredGameItem';
 
 /**
  * Key
@@ -9,32 +7,21 @@ import {Vector2d} from '../helpers';
  * @param {Vector2d} options.position
  * @param {String} color - 'red', 'green' or 'blue'
  */
-export default class Key extends GameItem {
+export default class Key extends ColoredGameItem {
 	constructor(options) {
 		super(Object.assign({}, options, {
 			name: 'key',
-			baseClass: 'door-key',
-			size: options.size || new Vector2d(32, 32),
-			defaultPosition: options.defaultPosition || new Vector2d(0, 0),
+			colors: {
+				red: {
+					url: 'img/keyRed.png',
+				},
+				green: {
+					url: 'img/keyGreen.png',
+				},
+				blue: {
+					url: 'img/keyBlue.png',
+				},
+			},
 		}));
-
-		this.color = options.color || 'red';
-
-		this.classes.initialized = `${this.classes.base}_initialized`;
-		this.classes.red = `${this.classes.base}_red`;
-		this.classes.green = `${this.classes.base}_green`;
-		this.classes.blue = `${this.classes.base}_blue`;
-
-		this.render(() => {
-			this.node.classList.add(this.classes[this.color]);
-		});
-	}
-
-	initialize() {
-		super.initialize();
-	}
-
-	destroy() {
-		super.destroy();
 	}
 }

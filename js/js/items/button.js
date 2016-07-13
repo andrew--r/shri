@@ -1,6 +1,10 @@
 import GameItem from '../gameItem';
 import {Vector2d} from '../helpers';
 
+const sprites = {
+	regular: 'img/switchGreen.png',
+	pressed: 'img/switchGreen_pressed.png',
+};
 
 /**
  * Simple button
@@ -13,12 +17,11 @@ export default class Button extends GameItem {
 	constructor(options) {
 		super(Object.assign({}, options, {
 			name: 'button',
-			baseClass: 'door-button',
-			size: options.size || new Vector2d(32, 32),
-			defaultPosition: options.defaultPosition || new Vector2d(0, 0),
+			sprite: {
+				url: sprites.regular,
+			},
 		}));
 
-		this.classes.initialized = `${this.classes.base}_initialized`;
 		this.classes.hidden = `${this.classes.base}_hidden`;
 		this.classes.pressed = `${this.classes.base}_pressed`;
 
@@ -36,7 +39,6 @@ export default class Button extends GameItem {
 
 	initialize() {
 		super.initialize();
-
 		this.on('pointerdown', this._onPress);
 		this.on('pointerup pointercancel pointerleave', this._onRelease);
 	}
@@ -47,27 +49,19 @@ export default class Button extends GameItem {
 		this.off('pointerup pointercancel pointerleave', this._onRelease);
 	}
 
-	show() {
-		this.render(() => {
-			this.node.classList.remove(this.classes.hidden);
-		});
-	}
-
-	hide() {
-		this.render(() => {
-			this.node.classList.add(this.classes.hidden);
-		});
-	}
-
 	press() {
-		this.render(() => {
-			this.node.classList.add(this.classes.pressed);
+		this.setSprite({
+			url: sprites.pressed,
 		});
+
+		this.render();
 	}
 
 	release() {
-		this.render(() => {
-			this.node.classList.remove(this.classes.pressed);
+		this.setSprite({
+			url: sprites.regular,
 		});
+
+		this.render();
 	}
 }

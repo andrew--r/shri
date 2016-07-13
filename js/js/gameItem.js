@@ -5,8 +5,18 @@ import {Vector2d} from './helpers';
  *
  * @param {Vector2d} options.size - size of item in pixels
  * @param {Vector2d} options.defaultPosition - initial item position on screen
+ *
+ * @param {Number} options.rotate - rotate angle in degrees
+ * @param {Number} options.scale - scale factor
+ *
  * @param {String} options.baseClass - base DOM element class
- * @param {String} options.name - item type name
+ * @param {String} options.name - item name
+ *
+ * @param {Object} options.sprite
+ * @param {String} options.sprite.url
+ * @param {String} options.sprite.size - background-size value
+ * @param {String} options.sprite.repeat - background-repeat value
+ *
  * @param {Number} zIndex
  */
 
@@ -23,10 +33,16 @@ export default class GameItem {
 		this.classes = {
 			base: options.baseClass || defaultClass,
 			initialized: `${options.baseClass || defaultClass}_initialized`,
+			transitionDisabled: `${options.baseClass || defaultClass}_transition-disabled`,
 		};
 
 		this.defaultPosition = options.defaultPosition || new Vector2d(0, 0);
 		this.translate = new Vector2d(0, 0);
+
+		this.rotate = options.rotate || 0;
+		this.scale = options.scale || 1;
+
+		const {node, classes} = this;
 
 		if (options.zIndex === undefined) {
 			this.zIndex = 1;
@@ -34,35 +50,30 @@ export default class GameItem {
 			this.zIndex = options.zIndex;
 		}
 
-		const {node, classes} = this;
+		if (options.sprite) {
+			this.sprite = options.sprite;
+		}
 
-		this.render(() => {
-			node.style.position = 'absolute';
-			node.style.zIndex = this.zIndex;
-			node.setAttribute('data-id', this.id);
-			node.setAttribute('data-item-name', options.name);
+		node.style.position = 'absolute';
+		node.style.zIndex = this.zIndex;
+		node.setAttribute('data-id', this.id);
+		node.setAttribute('data-item-name', options.name);
 
-			if (classes.base) {
-				node.classList.add(classes.base);
-			}
-		});
+		if (classes.base) {
+			node.classList.add(classes.base);
+		}
 	}
 
 	initialize() {
-		const {node, classes} = this;
 		this.render(() => {
-			this.updateSize();
-			this.updatePosition();
-
-			node.classList.add(classes.initialized);
-			this.isInitialized = true;
+			this.node.classList.add(this.classes.initialized);
 		});
 	}
 
 	destroy() {
 		const {node, classes} = this;
 
-		this.render(() => {
+		window.requestAnimationFrame(() => {
 			node.setAttribute('style', '');
 			node.classList.remove(classes.initialized);
 			this.isInitialized = false;
@@ -73,22 +84,40 @@ export default class GameItem {
 		return Vector2d.sum(this.defaultPosition, this.translate);
 	}
 
+	setRotate(angle) {
+		this.rotate = angle;
+	}
+
+	setScale(value) {
+		this.scale = value;
+	}
+
+	setSprite({url, size, repeat}) {
+		if (!this.sprite) this.sprite = {};
+
+		if (url) this.sprite.url = url;
+		if (size) this.sprite.size = size;
+		if (repeat) this.sprite.repeat = repeat;
+	}
+
 	/**
 	 * Updates item position
 	 *
-	 * @param {Vector2d} newPosition
+	 * @param {Number} x
+	 * @param {Number} y
 	 */
-	setPosition(newPosition) {
-		this.position = newPosition;
+	setPosition(x, y) {
+		this.position = new Vector2d(x, y);
 	}
 
 	/**
 	 * Updates item translate
 	 *
-	 * @param {Vector2d} newTranslate
+	 * @param {Number} x
+	 * @param {Number} y
 	 */
-	setTranslate(newTranslate) {
-		this.translate = newTranslate;
+	setTranslate(x, y) {
+		this.translate = new Vector2d(x, y);
 	}
 
 	updateSize() {
@@ -99,16 +128,58 @@ export default class GameItem {
 	}
 
 	updatePosition() {
-		const {node, defaultPosition, translate} = this;
+		const {node, defaultPosition} = this;
 
 		node.style.left = `${defaultPosition.x}px`;
 		node.style.top = `${defaultPosition.y}px`;
+	}
 
-		node.style.transform = `translate(${translate.x}px, ${translate.y}px)`;
+	updateTransform() {
+		const {node, translate, scale, rotate} = this;
+
+		node.style.transform = `translate(${translate.x}px, ${translate.y}px) scale(${scale}) rotate(${rotate}deg)`; // eslint-disable-line max-len
+	}
+
+	updateSprite() {
+		const {node, sprite} = this;
+		if (!sprite) return;
+
+		if (sprite.url) node.style.backgroundImage = `url(${sprite.url})`;
+		if (sprite.size) node.style.backgroundSize = sprite.size;
+		if (sprite.repeat) node.style.backgroundRepeat = sprite.repeat;
 	}
 
 	render(callback) {
-		window.requestAnimationFrame(callback);
+		window.requestAnimationFrame(() => {
+			this.updateSprite();
+			this.updateSize();
+			this.updatePosition();
+			this.updateTransform();
+
+			if (typeof callback === 'function') {
+				callback();
+			}
+		});
+	}
+
+	disableTransition() {
+		this.node.classList.add(this.classes.transitionDisabled);
+	}
+
+	enableTransition() {
+		this.node.classList.remove(this.classes.transitionDisabled);
+	}
+
+	show() {
+		window.requestAnimationFrame(() => {
+			this.node.classList.remove(this.classes.hidden);
+		});
+	}
+
+	hide() {
+		window.requestAnimationFrame(() => {
+			this.node.classList.add(this.classes.hidden);
+		});
 	}
 
 	/**

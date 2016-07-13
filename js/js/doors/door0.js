@@ -29,8 +29,7 @@ export default class Door0 extends DoorBase {
 		}
 
 		function _onButtonPointerUp(e) {
-			// COMMENTED ONLY FOR DEBUG
-			// e.target.classList.remove('door-riddle__button_pressed');
+			e.target.classList.remove('door-riddle__button_pressed');
 		}
 
 		/**

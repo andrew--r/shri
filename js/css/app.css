@@ -201,99 +201,24 @@ body {
 	background-color: #F3E5D9;
 }
 
-/* lever */
-.door-lever {
+/* game-item */
+.game-item {
 	display: none;
-	width: 64px;
-	height: 64px;
-	background-size: 64px;
-	background-position: center bottom;
-	background-repeat: no-repeat;
-	transition: background .1s linear;
-}
-
-.door-lever_initialized {
-	display: block;
-}
-
-.door-lever[data-direction="middle"] {
-	background-image: url('../img/leverMid.png');
-}
-
-.door-lever[data-direction="left"] {
-	background-image: url('../img/leverLeft.png');
-}
-
-.door-lever[data-direction="right"] {
-	background-image: url('../img/leverRight.png');
-}
-
-/* button */
-.door-button {
-	display: none;
-	width: 64px;
-	height: 64px;
 	background-size: cover;
-	background-image: url('../img/switchGreen.png');
-	transition: opacity .4s ease;
+	background-repeat: no-repeat;
+	transition: opacity .2s ease, transform .2s ease;
+	will-change: transform, opacity;
+	backface-visibility: hidden;
 }
 
-.door-button_initialized {
+.game-item_initialized {
 	display: block;
 }
 
-.door-button_pressed {
-	background-image: url('../img/switchGreen_pressed.png');
-}
-
-.door-button_hidden {
+.game-item_hidden {
 	opacity: 0;
 }
 
-/* lock */
-.door-lock {
-	display: none;
-	width: 128px;
-	height: 128px;
-	background-size: cover;
-}
-
-.door-lock_initialized {
-	display: block;
-}
-
-.door-lock_red {
-	background-image: url('../img/lockRed.png');
-}
-
-.door-lock_green {
-	background-image: url('../img/lockGreen.png');
-}
-
-.door-lock_blue {
-	background-image: url('../img/lockBlue.png');
-}
-
-/* key */
-.door-key {
-	display: none;
-	width: 64px;
-	height: 64px;
-	background-size: cover;
-}
-
-.door-key_initialized {
-	display: block;
-}
-
-.door-key_red {
-	background-image: url('../img/keyRed.png');
-}
-
-.door-key_green {
-	background-image: url('../img/keyGreen.png');
-}
-
-.door-key_blue {
-	background-image: url('../img/keyBlue.png');
+.game-item_transition-disabled {
+	transition: none;
 }

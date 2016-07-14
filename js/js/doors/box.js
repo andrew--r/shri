@@ -110,18 +110,20 @@ export default class Box extends DoorBase {
 				activePointers[1].position
 			);
 
-			const currentScale = (interactionState.initialScale - 1) + currentDistance / initialDistance;
+			const userScale = currentDistance / initialDistance;
+			const currentScale = interactionState.initialScale - 1;
+			const finalScale = userScale > 1 ? currentScale + userScale : currentScale * userScale;
 
 			const currentAngle = Vector2d.angle(
 				interactionState.baseVector,
 				Vector2d.normalize(activePointers[0].position, activePointers[1].position)
 			);
 
-			this.jewelKey.setScale(currentScale); // eslint-disable-line max-len
+			this.jewelKey.setScale(finalScale); // eslint-disable-line max-len
 			this.jewelKey.setRotate(currentAngle);
 			this.jewelKey.render();
 
-			const scaleMatches = currentScale > 2.8 && currentScale < 3.2;
+			const scaleMatches = finalScale > 2.8 && finalScale < 3.2;
 			const angleMatches = currentAngle > -35 && currentAngle < -25;
 			if (scaleMatches && angleMatches) {
 				this.unlock();

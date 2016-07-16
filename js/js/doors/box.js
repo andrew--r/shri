@@ -101,7 +101,6 @@ export default class Box extends DoorBase {
 			const {activePointers, initialDistance} = interactionState;
 			if (activePointers.length !== 2) return;
 			const findById = (id) => (item) => item.id === id;
-
 			const currentPointerState = activePointers.filter(findById(event.pointerId))[0];
 			currentPointerState.position = new Vector2d(event.clientX, event.clientY);
 

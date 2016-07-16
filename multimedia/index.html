@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Киноглушитель</title>
+
+	<link rel="stylesheet" href="build/main.css">
+</head>
+<body>
+	<main class="app" role="main">
+		<div class="app__inner">
+			<h1 class="app__title">Киноглушитель</h1>
+
+			<div class="app__page app__page_start" data-page="start">
+				<form action="" class="app__form">
+					<div class="input">
+						<label for="link-video" class="input__label">Ссылка на видео</label>
+						<input type="text" id="link-video" class="input__field" data-link-type="video" required>
+					</div>
+
+					<div class="input">
+						<label for="link-subtitles" class="input__label">На субтитры</label>
+						<input type="text" id="link-subtitles" class="input__field" data-link-type="subtitles" required>
+					</div>
+
+					<div class="input">
+						<label for="link-soundtrack" class="input__label">На саундтрек</label>
+						<input type="text" id="link-soundtrack" class="input__field" data-link-type="soundtrack" required>
+					</div>
+
+					<input type="submit" class="button" value="Заглушить">
+				</form>
+			</div>
+
+			<div class="app__page app__page_main app__page_visible" data-page="main">
+				<div class="player">
+					<div class="player__stage">
+						<div class="player__subtitles">— А вот и субтитры!</div>
+					</div>
+					<div class="player__controls">
+						<button class="player__control player__control_play" title="Play/Pause">Play/Pause</button>
+						<div class="player__control player__control_progress progress">
+							<div class="progress__bar" style="width: 0%;"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<script src="build/bundle.js"></script>
+</body>
+</html>

@@ -34,3 +34,35 @@ export function getRandomInt(min, max) {
 export function getRandom(min, max) {
     return Math.random() * (max - min) + min;
 }
+
+export const webgl = {
+	createShader(glContext, sourceCode, shaderType) {
+		const shader = glContext.createShader(shaderType);
+		glContext.shaderSource(shader, sourceCode);
+		glContext.compileShader(shader);
+		const compiledSuccessfully = glContext.getShaderParameter(shader, glContext.COMPILE_STATUS);
+
+		if (!compiledSuccessfully) {
+			throw new Error('Could not compile shader: ', glContext.getShaderInfoLog(shader));
+		}
+
+		return shader;
+	},
+
+	createProgram(glContext, vertexShader, fragmentShader) {
+		const program = glContext.createProgram();
+
+		glContext.attachShader(program, vertexShader);
+		glContext.attachShader(program, fragmentShader);
+
+		glContext.linkProgram(program);
+
+		const linkedSuccessfully = glContext.getProgramParameter(program, glContext.LINK_STATUS);
+
+		if (!linkedSuccessfully) {
+			throw new Error('Program failed to link: ', glContext.getProgramInfoLog(program));
+		}
+
+		return program;
+	},
+};

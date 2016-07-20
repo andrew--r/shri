@@ -1,5 +1,8 @@
+import Player from './player';
+
 export default class Application {
-	constructor(baseClass) {
+	constructor(options = {}) {
+		const baseClass = options.baseClass || 'app';
 		const visiblePageClass = `${baseClass}__page_visible`;
 
 		this.root = document.querySelector(`.${baseClass}`);
@@ -28,6 +31,11 @@ export default class Application {
 
 			this.pages.start.classList.remove(visiblePageClass);
 			this.pages.main.classList.add(visiblePageClass);
+
+			window.player = this.player = new Player({
+				root: this.root.querySelector('.player'),
+				resources: this.links,
+			});
 		}
 	}
 }

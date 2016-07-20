@@ -40,15 +40,6 @@ gulp.task('copy-images', () => {
 		.pipe(gulp.dest(OUT));
 });
 
-gulp.task('copy-scripts', () => {
-	return gulp
-		.src('source/js/static/**/*.js')
-		.pipe(plumber(errorHandler('copy-scripts')))
-		.pipe(changed(OUT))
-		.pipe(rename(flatten))
-		.pipe(gulp.dest(OUT));
-});
-
 gulp.task('compile-css', ['copy-images'], () => {
 	return gulp
 		.src('./source/css/main.css')
@@ -84,7 +75,16 @@ gulp.task('compile-js', () => {
 		.pipe(browserSync.stream());
 });
 
-gulp.task('default', ['copy-images', 'copy-scripts', 'compile-html', 'compile-css', 'compile-js'],  () => {
+gulp.task('copy-static', () => {
+	return gulp
+		.src('source/static/**/*')
+		.pipe(plumber(errorHandler('copy-static')))
+		.pipe(changed(OUT))
+		.pipe(rename(flatten))
+		.pipe(gulp.dest(OUT));
+});
+
+gulp.task('default', ['copy-images', 'copy-static', 'compile-html', 'compile-css', 'compile-js'],  () => {
 	bsync.init({
 		server: './',
 	});
@@ -93,5 +93,5 @@ gulp.task('default', ['copy-images', 'copy-scripts', 'compile-html', 'compile-cs
 	gulp.watch('source/html/**/*.html', ['compile-html']).on('change', bsync.reload);
 	gulp.watch('source/images/**/*', ['copy-images']).on('change', bsync.reload);
 	gulp.watch(['source/js/**/*.js', '!source/js/static/**/*'], ['compile-js']).on('change', bsync.reload);
-	gulp.watch('source/js/static/**/*.js', ['copy-scripts']).on('change', bsync.reload);
+	gulp.watch('source/static/**/*', ['copy-static']).on('change', bsync.reload);
 });

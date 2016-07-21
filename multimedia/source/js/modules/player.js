@@ -339,17 +339,13 @@ export default class Player {
 
 function loadVideo(url) {
 	return new Promise((resolve, reject) => {
-		ensureFileLoaded(url)
-			.then((result) => {
-				const video = document.createElement('video');
-				video.muted = true;
-				video.addEventListener('error', reject);
-				video.addEventListener('canplaythrough', (event) => {
-					resolve(video);
-				});
-				video.src = url;
-			})
-			.catch(reject);
+		const video = document.createElement('video');
+		video.muted = true;
+		video.addEventListener('error', reject);
+		video.addEventListener('canplaythrough', (event) => {
+			resolve(video);
+		});
+		video.src = url;
 	});
 }
 

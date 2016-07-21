@@ -351,26 +351,18 @@ function loadVideo(url) {
 
 function loadAudio(url) {
 	return new Promise((resolve, reject) => {
-		ensureFileLoaded(url)
-			.then((result) => {
-				const audio = document.createElement('audio');
-				audio.addEventListener('error', reject);
-				audio.addEventListener('canplaythrough', (event) => {
-					audio.loop = true;
-					resolve(audio);
-				});
-				audio.src = url;
-			})
-			.catch(reject);
+		const audio = document.createElement('audio');
+		audio.addEventListener('error', reject);
+		audio.addEventListener('canplaythrough', (event) => {
+			audio.loop = true;
+			resolve(audio);
+		});
+		audio.src = url;
 	});
 }
 
 function loadTextFile(url) {
 	return fetch(url).then((response) => response.text());
-}
-
-function ensureFileLoaded(url) {
-	return fetch(url).then((response) => response.blob());
 }
 
 function parseSubtitles(source) {

@@ -6,9 +6,6 @@ import {
 	webgl,
 } from '../helpers';
 
-import grayscaleVertexShaderSource from '../shaders/grayscaleVertexShader';
-import grayscaleFragmentShaderSource from '../shaders/grayscaleFragmentShader';
-
 
 const baseClass = 'player';
 const classes = {
@@ -71,6 +68,7 @@ export default class Player {
 				this.audio = result[1];
 				this.subtitles = parseSubtitles(result[2]);
 
+				this._addEventListeners();
 				this._setupCanvas();
 				this._setupTiming();
 				this._setupSound();
@@ -78,6 +76,15 @@ export default class Player {
 				this.elements.root.classList.add(`${classes.base}_initialized`);
 				this.play();
 			});
+	}
+
+	_addEventListeners() {
+		const {elements} = this;
+		const playControls = [elements.playButton, elements.stage];
+
+		playControls.map((control) => control.addEventListener('click', () => {
+			this[this.state.isPlaying ? 'pause' : 'play']();
+		}));
 	}
 
 	/**
@@ -108,8 +115,7 @@ export default class Player {
 		};
 
 		this.timeline = computeTimeline(this.subtitles, duration);
-
-		this._updateTotalTime();
+		this.elements.timeTotal.innerText = formatSeconds(this.timing.duration);
 	}
 
 	_setupSound() {
@@ -125,7 +131,7 @@ export default class Player {
 					const white = Math.random() * 2 - 1;
 					output[i] = (lastOut + (0.02 * white)) / 1.02;
 					lastOut = output[i];
-					output[i] *= 0.5; // (roughly) compensate for gain
+					output[i] *= 0.25; // (roughly) compensate for gain
 				}
 			}
 			return node;
@@ -133,14 +139,12 @@ export default class Player {
 
 		brownNoise.connect(audioContext.destination);
 
-		const distortion = audioContext.createWaveShaper();
 		const biquadFilter = audioContext.createBiquadFilter();
-		biquadFilter.type = 'lowpass';
-		biquadFilter.frequency.value = 500;
+		biquadFilter.type = 'highpass';
+		biquadFilter.frequency.value = 900;
 		biquadFilter.gain.value = 5;
 
-		audioSource.connect(distortion);
-		distortion.connect(biquadFilter);
+		audioSource.connect(biquadFilter);
 		biquadFilter.connect(audioContext.destination);
 	}
 
@@ -154,8 +158,8 @@ export default class Player {
 
 	_playVideo() {
 		if (!this.state.videoIsPlaying) {
-			this.video.play();
 			this.state.videoIsPlaying = true;
+			this.video.play();
 		}
 	}
 
@@ -169,22 +173,11 @@ export default class Player {
 
 	_pauseVideo() {
 		if (this.state.videoIsPlaying) {
-			this.video.pause();
 			this.state.videoIsPlaying = false;
+			this.video.pause();
 		}
 	}
-
-	_updateTotalTime() {
-		this.elements.timeTotal.innerText = formatSeconds(this.timing.duration);
-	}
-
-	_updateWatchedTime(seconds) {
-		const {watchedSeconds, prevWatchedSeconds, duration} = this.timing;
-		if (Math.floor(prevWatchedSeconds) === Math.floor(watchedSeconds)) return;
-		this.elements.progressBar.style.transform = `translate(${-100 + (watchedSeconds / duration * 100)}%, 0)`;
-		this.elements.timeWatched.innerText = formatSeconds(watchedSeconds);
-	}
-
+	
 	_updateTiming() {
 		const {timing} = this;
 		const currentFrameTimestamp = new Date();
@@ -198,6 +191,13 @@ export default class Player {
 		timing.lastFrameTimestamp = currentFrameTimestamp;
 
 		this._updateWatchedTime();
+	}
+
+	_updateWatchedTime(seconds) {
+		const {watchedSeconds, prevWatchedSeconds, duration} = this.timing;
+		if (Math.floor(prevWatchedSeconds) === Math.floor(watchedSeconds)) return;
+		this.elements.progressBar.style.transform = `translate(${-100 + (watchedSeconds / duration * 100)}%, 0)`;
+		this.elements.timeWatched.innerText = formatSeconds(watchedSeconds);
 	}
 
 	_updateCanvas() {
@@ -224,45 +224,60 @@ export default class Player {
 	}
 
 	_drawSubtitles(text) {
-		if (this.textWasDrawn) return;
-
 		const {virtualContext, elements} = this;
 		const {width, height} = elements.canvas;
 
 		virtualContext.fillStyle = '#000000';
-		virtualContext.font = '20px Oranienbaum';
+		virtualContext.font = '22px Oranienbaum';
 		virtualContext.fillRect(0, 0, width, height);
 		virtualContext.fillStyle = '#ffffff';
 
-		const heightStart = height * 0.1;
-		const widthStart = width * 0.05;
+		const rows = text.split('\n');
+		const mostWideRow = rows.reduce((string, currentRow) => {
+			return currentRow.length > string.length ? currentRow : string;
+		}, '');
 		const lineHeight = 28;
 
-		text
-			.split('\n')
-			.map((row, i) => {
-				virtualContext.fillText(row, widthStart, heightStart + i * lineHeight);
-			});
+		const positionY = height / 2 - (rows.length * lineHeight) / 2;
+		const positionX = width / 2 - virtualContext.measureText(mostWideRow).width / 2;
 
-		this.textWasDrawn = true;
+		rows.map((row, i) => {
+			virtualContext.fillText(row, positionX, positionY + i * lineHeight);
+		});
 	}
 
 	_applyEffects() {
 		const {context, elements} = this;
 		const {width, height} = elements.virtualCanvas;
 
-		context.fillStyle = '#ffffff';
-		context.clearRect(0, 0, width, height);
+		// current frame
 		context.drawImage(elements.virtualCanvas, 0, 0, width, height);
+
 		context.globalCompositeOperation = 'color';
+
+		// overlay for grayscale filter
+		context.fillStyle = '#ffffff';
 		context.fillRect(0, 0, width, height);
 
 		context.globalCompositeOperation = 'source-over';
+
+		// overlay for blinking
+		context.globalAlpha = getRandom(0, 0.2);
+		context.fillStyle = '#000000';
+		context.fillRect(0, 0, width, height);
+		context.globalAlpha = 1;
+
+		// some artifacts and scratches
 		drawRandomArtifact(context, width, height);
 		drawRandomArtifact(context, width, height);
 		drawRandomArtifact(context, width, height);
+		drawRandomScratch(context, width, height);
+		drawRandomScratch(context, width, height);
+		drawRandomScratch(context, width, height);
 	}
 
+	// old grayscale filter, not too perfomant because of processing every image pixel.
+	// just for history :)
 	_applyGrayscale(pixelData) {
 		const pixels = pixelData.data;
 		const pixelsLength = pixels.length;
@@ -294,9 +309,9 @@ export default class Player {
 	// Public methods
 
 	play() {
-		const {elements,} = this;
+		const {elements} = this;
 
-		this.lastFrameTimestamp = new Date();
+		this.timing.lastFrameTimestamp = new Date();
 		this.state.isPlaying = true;
 
 		elements.playButton.classList.remove(classes.playButton.paused);
@@ -309,14 +324,15 @@ export default class Player {
 
 	pause() {
 		const {elements} = this;
-
 		this.state.isPlaying = false;
 
-		elements.playButton.classList.remove(classes.playButton.playing);
-		elements.playButton.classList.add(classes.playButton.paused);
+		window.requestAnimationFrame(() => {
+			elements.playButton.classList.remove(classes.playButton.playing);
+			elements.playButton.classList.add(classes.playButton.paused);
 
-		this._pauseSoundtrack();
-		this._pauseVideo();
+			this._pauseSoundtrack();
+			this._pauseVideo();
+		});
 	}
 }
 
@@ -326,7 +342,7 @@ function loadVideo(url) {
 		ensureFileLoaded(url)
 			.then((result) => {
 				const video = document.createElement('video');
-				video.defaultMuted = true;
+				video.muted = true;
 				video.addEventListener('error', reject);
 				video.addEventListener('canplaythrough', (event) => {
 					resolve(video);
@@ -447,21 +463,53 @@ function drawRandomArtifact(context, width, height) {
 		y: getRandomInt(0, height),
 	};
 
-	const coefficient = 2.5;
+	const halfSize = 2.5;
 
 	const firstPoint = {
-		x: getRandomInt(center.x - coefficient, center.x + coefficient),
-		y: getRandomInt(center.y - coefficient, center.y + coefficient),
+		x: getRandomInt(center.x - halfSize, center.x + halfSize),
+		y: getRandomInt(center.y - halfSize, center.y + halfSize),
 	};
 
 	const secondPoint = {
-		x: getRandomInt(center.x - coefficient, center.x + coefficient),
-		y: getRandomInt(center.y - coefficient, center.y + coefficient),
+		x: getRandomInt(center.x - halfSize, center.x + halfSize),
+		y: getRandomInt(center.y - halfSize, center.y + halfSize),
 	};
 
 	const baseColor = getRandomInt(0, 150);
 	context.strokeStyle = `rgb(${baseColor}, ${baseColor}, ${baseColor})`;
 	context.lineWidth = 10;
+	context.beginPath();
+		context.moveTo(firstPoint.x, firstPoint.y);
+		context.quadraticCurveTo(
+			center.x,
+			center.y,
+			secondPoint.x,
+			secondPoint.y
+		);
+	context.stroke();
+}
+
+function drawRandomScratch(context, width, height) {
+	const center = {
+		x: getRandomInt(0, width),
+		y: getRandomInt(0, height),
+	};
+
+	const halfSize = getRandomInt(5, 40);
+
+	const firstPoint = {
+		x: getRandomInt(center.x - halfSize, center.x + halfSize),
+		y: getRandomInt(center.y - halfSize, center.y + halfSize),
+	};
+
+	const secondPoint = {
+		x: getRandomInt(center.x - halfSize, center.x + halfSize),
+		y: getRandomInt(center.y - halfSize, center.y + halfSize),
+	};
+
+	const baseColor = getRandomInt(0, 100);
+	context.strokeStyle = `rgb(${baseColor}, ${baseColor}, ${baseColor})`;
+	context.lineWidth = 1;
 	context.beginPath();
 		context.moveTo(firstPoint.x, firstPoint.y);
 		context.quadraticCurveTo(
